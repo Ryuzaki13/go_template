@@ -28,5 +28,10 @@ func Connect(opt *setting.Setting) error {
 		return e
 	}
 
+	e = prepare()
+	if e != nil {
+		return e
+	}
+
 	return nil
 }

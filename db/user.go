@@ -1,6 +1,9 @@
 package db
 
-import "fmt"
+import (
+	"database/sql"
+	"fmt"
+)
 
 type User struct {
 	Login    string
@@ -8,13 +11,38 @@ type User struct {
 	Name     string
 }
 
-func (u *User) Insert() {
-	_, e := Link.Exec(`
-	INSERT INTO "User"
-    ("Login", "Password", "Name")
-    VALUES ($1, $2, $3)`, u.Login, u.Password, u.Name)
+var query map[string]*sql.Stmt
+
+func prepare() error {
+	query = make(map[string]*sql.Stmt)
+
+	var e error
+	query["UserInsert"], e = Link.Prepare(`INSERT INTO "User"
+		("Login", "Password", "Name")
+		VALUES ($1, $2, $3)`)
 	if e != nil {
 		fmt.Println(e)
+		return e
+	}
+
+	query["UserSelect"], e = Link.Prepare(
+		`SELECT "Login", "Password", "Name" FROM "User" ORDER BY "Name"`)
+	if e != nil {
+		fmt.Println(e)
+		return e
+	}
+
+	return nil
+}
+
+func (u *User) Insert() {
+	stmt, ok := query["UserInsert"]
+	if !ok {
+		return
+	}
+	_, e := stmt.Exec(u.Login, u.Password, u.Name)
+	if e != nil {
+		Logger.Println(e)
 	}
 }
 
@@ -24,7 +52,7 @@ WHERE "Login"=$1 AND "Password"=$2`,
 		u.Login, u.Password)
 	e := row.Scan(&u.Name)
 	if e != nil {
-		fmt.Println(e)
+		Logger.Println(e)
 	}
 }
 

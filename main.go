@@ -8,6 +8,8 @@ import (
 )
 
 func main() {
+	db.InitLogger()
+
 	opt := setting.Load("setting.json")
 	e := db.Connect(opt)
 	if e != nil {
@@ -16,9 +18,10 @@ func main() {
 	}
 
 	user := db.User{}
-	users := user.SelectAll()
-
-	fmt.Println(users)
+	user.Login = "ASD222"
+	user.Password = "123"
+	user.Name = "HELLO"
+	user.Insert()
 
 	router := gin.Default()
 	router.LoadHTMLGlob("template/*")
