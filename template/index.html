@@ -1,11 +1,18 @@
+{{define "index"}}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="assets/css/style.css">
-    <title>Title</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <title>{{.Title}}</title>
 </head>
 <body>
-sdfsdfsdfd qwewqe
+    {{template "header" .Title}}
+    {{template "content"}}
+    {{if eq .IsAdmin true}}
+        {{template "admin"}}
+    {{end}}
+    {{template "footer" .Users}}
 </body>
 </html>
+{{end}}

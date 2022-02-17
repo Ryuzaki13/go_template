@@ -17,12 +17,6 @@ func main() {
 		return
 	}
 
-	user := db.User{}
-	user.Login = "ASD222"
-	user.Password = "123"
-	user.Name = "HELLO"
-	user.Insert()
-
 	router := gin.Default()
 	router.LoadHTMLGlob("template/*")
 	router.Static("assets", "assets")
@@ -31,5 +25,13 @@ func main() {
 }
 
 func index(c *gin.Context) {
-	c.HTML(200, "index.html", nil)
+	user := db.User{}
+
+	users := user.SelectAll()
+
+	c.HTML(200, "index", gin.H{
+		"Users":   users,
+		"Title":   "Сайтик",
+		"IsAdmin": true,
+	})
 }

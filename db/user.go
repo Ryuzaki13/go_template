@@ -36,13 +36,21 @@ func prepare() error {
 }
 
 func (u *User) Insert() {
+	tx, e := Link.Begin()
+	if e != nil {
+		return
+	}
+
+	defer deferTx(tx)
+
 	stmt, ok := query["UserInsert"]
 	if !ok {
 		return
 	}
-	_, e := stmt.Exec(u.Login, u.Password, u.Name)
+	_, e = stmt.Exec(u.Login, u.Password, u.Name)
 	if e != nil {
 		Logger.Println(e)
+		panic(e)
 	}
 }
 
@@ -82,4 +90,13 @@ func (u *User) SelectAll() []User {
 	}
 
 	return users
+}
+
+func deferTx(tx *sql.Tx) {
+	r := recover()
+	if r != nil {
+		_ = tx.Rollback()
+	} else {
+		_ = tx.Commit()
+	}
 }
