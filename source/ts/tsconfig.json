@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "outFile": "../../assets/js/main.js"
+  },
+  "files": [
+    "util.ts",
+    "net.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
