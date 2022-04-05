@@ -29,21 +29,33 @@ function buildTasks(r) {
         delete: document.querySelector(`[data-status="delete"]`),
     }
 
-    for (let i = 0; i < r; i++) {
+    for (let key in blocks) {
+        let block = blocks[key];
+        while (block.children.length > 0) {
+            block.children[0].remove();
+        }
+    }
+
+    for (let i = 0; i < r.length; i++) {
         let div = document.createElement("div");
-        div.dataset.id = r.id;
+        div.dataset.id = r[i].id;
         div.draggable = true;
         div.className = "item";
-        div.textContent = r.name;
-        blocks[r.status].append(div);
+        div.textContent = r[i].name;
+        console.log(r[i].status);
+        blocks[r[i].status] && blocks[r[i].status].append(div);
     }
+
+    setDraggable();
 }
 
 // DragAndDrop
 
-let dragElements = document.querySelectorAll(".task-list .item");
-for (let i = 0; i < dragElements.length; i++) {
-    dragElements[i].ondragstart = onDrag;
+function setDraggable() {
+    let dragElements = document.querySelectorAll(".task-list .item");
+    for (let i = 0; i < dragElements.length; i++) {
+        dragElements[i].ondragstart = onDrag;
+    }
 }
 
 let dropElements = document.querySelectorAll(".task-list > div");
@@ -61,8 +73,15 @@ function onDrop(e) {
     let itemId = e.dataTransfer.getData("item");
     let item = document.querySelector('[data-id="' + itemId + '"]');
     item && e.target.append(item);
+
+    SEND("POST", "/task", {
+        id: +itemId,
+        status: e.target.dataset.status
+    }, buildTasks);
 }
 
 function onDragOver(e) {
     e.preventDefault();
 }
+
+SEND("GET", "/task", null, buildTasks)

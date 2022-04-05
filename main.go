@@ -16,7 +16,7 @@ var tasks []Task
 func main() {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("template/*")
+	router.LoadHTMLGlob("template/*.html")
 
 	router.Static("assets", "assets")
 
