@@ -7,12 +7,6 @@
     <title>{{.Title}}</title>
 </head>
 <body>
-    {{template "header" .Title}}
-    {{template "content"}}
-    {{if eq .IsAdmin true}}
-        {{template "admin"}}
-    {{end}}
-    {{template "footer" .Users}}
 
     <script src="/assets/js/main.js"></script>
 </body>
